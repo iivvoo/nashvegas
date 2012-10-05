@@ -5,11 +5,11 @@ from optparse import make_option
 
 class Command(SyncDBCommand):
     option_list = SyncDBCommand.option_list + (
-        make_option('--skip-migrations',
-                    action='store_false',
+        make_option('--migrations',
+                    action='store_true',
                     dest='migrations',
-                    default=True,
-                    help='Skip nashvegas migrations, do traditional syncdb'),
+                    default=False,
+                    help='Run nashvegas migrations instead of traditional syncdb'),
     )
 
     def handle_noargs(self, **options):
@@ -28,7 +28,9 @@ class Command(SyncDBCommand):
                 interactive=options.get("interactive"),
                 verbosity=options.get("verbosity"),
             )
-
+        else:
+            print 'Not running nashvegas migrations; ' \
+                  'you may want to also run "manage.py upgradedb"'
         # Follow up with a syncdb on anything that wasnt included in migrations
         # (this catches things like test-only models)
         super(Command, self).handle_noargs(**options)
